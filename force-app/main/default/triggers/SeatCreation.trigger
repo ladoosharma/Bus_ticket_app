@@ -1,5 +1,5 @@
 trigger SeatCreation on Bus__c (after insert) {
-    List<Seat__c> allSeats = new List<Seat__c>();
+    /*List<Seat__c> allSeats = new List<Seat__c>();
     seat__c eachSeat;
     for(Bus__c eachBus : Trigger.new){
         if(eachBus.Is_operational__c){
@@ -11,5 +11,5 @@ trigger SeatCreation on Bus__c (after insert) {
     }
     if(!allSeats.isEmpty()){
         insert allSeats;
-    }
+    }*/
 }

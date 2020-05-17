@@ -15,4 +15,25 @@ public class customLookUpController {
         }
         return returnList;
     }
+    @AuraEnabled
+    public static List<Bus_Trip__c> getBusTrips(String fromAddr, String toAddr){
+      return [SELECT id, Bus__r.Name, Bus__r.Ticket_price__c, Trip_duration__c, Trip_timing__c, Tickets_Remaining__c, Trip_Capacity__c from Bus_Trip__c
+       where From_location__c =: fromAddr AND To_location__c =: toAddr AND Cancelled__c = false];  
+    }
+
+    @AuraEnabled
+    public static TripWrapper fetchSeatAndUserDetails(String tripInfo){
+        TripWrapper wrapp = new TripWrapper();
+        wrapp.userInfo = [SELECT name from profile where id =: userInfo.getProfileId()][0].Name;
+        wrapp.seatsList = [SELECT Id, Occupied__c, Seat_Number__c from Seat__c WHERE Bus_Trip__c =: tripInfo ORDER BY Seat_Number__c ASC];
+        return wrapp;
+    }
+
+    public class TripWrapper{
+        @AuraEnabled
+        public String userInfo{set;get;}
+        @AuraEnabled
+        public List<Seat__c> seatsList{set;get;}
+
+    }
 }

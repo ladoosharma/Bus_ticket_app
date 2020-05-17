@@ -7,9 +7,12 @@
     <aura:attribute name="IconName" type="string" default=""/>
     <aura:attribute name="label" type="string" default=""/>
     <aura:attribute name="Message" type="String" default=""/>
-    
+    <aura:attribute name="lookupUniqueName" type="String"/>
+    <aura:attribute name="fieldName" type="String"/>
     <!--declare events hendlers-->  
     <aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent" action="{!c.handleComponentEvent}"/>
+    <!--Register the component level event-->
+    <aura:registerEvent name="ParLookupParentCommunicator" type="c:LookupParentCommunicator"/>
    
     
     <!-- https://www.lightningdesignsystem.com/components/lookups/ --> 

@@ -54,8 +54,13 @@
      handleComponentEvent : function(component, event, helper) {
      // get the selected Account record from the COMPONETN event 	 
         var selectedAccountGetFromEvent = event.getParam("recordByEvent");
+        var compEvent = component.getEvent("ParLookupParentCommunicator");
+     // set the Selected sObject Record to the event attribute.  
+          compEvent.setParams({"dataMap" : {lookupName: component.get("v.lookupUniqueName"), data:selectedAccountGetFromEvent} });  
+     // fire the event  
+          
         component.set("v.selectedRecord" , selectedAccountGetFromEvent); 
-        debugger;
+        //debugger;
          var forclose = component.find("lookup-pill");
             $A.util.addClass(forclose, 'slds-show');
             $A.util.removeClass(forclose, 'slds-hide');
@@ -67,7 +72,7 @@
          var lookUpTarget = component.find("lookupField");
              $A.util.addClass(lookUpTarget, 'slds-hide');
              $A.util.removeClass(lookUpTarget, 'slds-show');  
-       
+             compEvent.fire();
      },
  })
  
