@@ -155,8 +155,9 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>Bus Ticket</label>
     <nameField>
-        <label>Bus Ticket Name</label>
-        <type>Text</type>
+        <displayFormat>TCIN-{000000}</displayFormat>
+        <label>Ticket Id</label>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Bus Ticket</pluralLabel>
     <searchLayouts/>
