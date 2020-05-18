@@ -1,13 +1,45 @@
-<aura:component controller="customLookUpController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
-<aura:attribute name="tripId" type="String"/>
-<aura:attribute name="seatList" type="List"/>
-<aura:attribute name="userType" type="String"/>
-<aura:handler name="init" value="{!this}" action="{!c.fetchSeatData}"/>
-<aura:if isTrue="{!v.userType != 'System Administrator'}">
-    
-    
-</aura:if>
-<aura:iteration items="{!v.seatList}" indexVar="seat" >
-    
-</aura:iteration>
-</aura:component>	
+<aura:component controller="customLookUpController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+    <aura:attribute name="tripId" type="String" />
+    <aura:attribute name="seatList" type="List" />
+    <aura:attribute name="userType" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.fetchSeatData}" />
+    <aura:attribute name="selectedSeats" type="List"/>
+    <aura:if isTrue="{!v.userType != 'System Administrator'}">
+
+
+    </aura:if>
+    <div class="slds-box">
+        <div class="slds-grid slds-grid_vertical-reverse " style="height:200px; width:23rem;overflow: scroll;margin-left:-15px;">
+            <aura:iteration items="{!v.seatList}" var="seats">
+                <div class="slds-col">
+                    <div class="slds-grid">
+                        <aura:iteration items="{!seats}" var="eachSeat">
+
+                            <div class="slds-col" style="padding: 3px;">
+                                <span>
+                                    <aura:if isTrue="{!eachSeat.Occupied__c}">
+                                        <b>S {!eachSeat.Seat_Number__c}</b>
+                                        <lightning:buttonIcon title="{!eachSeat.Seat_Number__c}" alternativeText="{!eachSeat.Seat_Number__c}" iconName="utility:user" disabled="true"
+                                            name="{!eachSeat.Id}" onclick="{!c.selectSeats}"
+                                            class="occupied">
+                                        </lightning:buttonIcon>
+                                        <aura:set attribute="else">
+                                            <b>S {!eachSeat.Seat_Number__c}</b>
+                                            <lightning:buttonIcon title="{!eachSeat.Seat_Number__c}" alternativeText="{!eachSeat.Seat_Number__c}" iconName="utility:user" disabled="false"
+                                                name="{!eachSeat.Id}" onclick="{!c.selectSeats}"
+                                                class="vacant">
+                                            </lightning:buttonIcon>
+                                        </aura:set>
+                                    </aura:if>
+                                </span>
+                            </div>
+
+                        </aura:iteration>
+                    </div>
+                </div>
+            </aura:iteration>
+        </div>
+    </div>
+</aura:component>

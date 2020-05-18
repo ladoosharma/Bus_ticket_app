@@ -1,2 +1,6 @@
-.THIS {
+.THIS .occupied {
+    background: lightsalmon;
+}
+.THIS .selected{
+    background: lightgreen;
 }
