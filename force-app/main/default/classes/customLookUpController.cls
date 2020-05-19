@@ -1,7 +1,6 @@
 public class customLookUpController {
     @AuraEnabled
     public static List < sObject > fetchLookUpValues(String searchKeyWord, String ObjectName, String Fields) {
-        system.debug('ObjectName-->' + ObjectName);
         String searchKey = searchKeyWord + '%';
         
         List < sObject > returnList = new List < sObject > ();
@@ -24,16 +23,25 @@ public class customLookUpController {
     @AuraEnabled
     public static TripWrapper fetchSeatAndUserDetails(String tripInfo){
         TripWrapper wrapp = new TripWrapper();
-        wrapp.userInfo = [SELECT name from profile where id =: userInfo.getProfileId()][0].Name;
-        wrapp.seatsList = [SELECT Id, Occupied__c, Seat_Number__c from Seat__c WHERE Bus_Trip__c =: tripInfo ORDER BY Seat_Number__c ASC];
+        wrapp.userDetail.userInfo = [SELECT name from profile where id =: userInfo.getProfileId()][0].Name;
+        wrapp.userDetail.userId = userInfo.getUserId();
+        wrapp.seatsList = [SELECT Id, Occupied__c, Seat_Number__c, Ticket_Price__c from Seat__c WHERE Bus_Trip__c =: tripInfo ORDER BY Seat_Number__c ASC];
         return wrapp;
     }
 
     public class TripWrapper{
         @AuraEnabled
-        public String userInfo{set;get;}
+        public User_Details userDetail{set;get;}
         @AuraEnabled
         public List<Seat__c> seatsList{set;get;}
-
+        public TripWrapper(){
+            userDetail = new User_Details();
+        }
+    }
+    public class User_Details{
+        @AuraEnabled
+        public string userInfo{set;get;}
+        @AuraEnabled
+        public string userId{set;get;}
     }
 }
