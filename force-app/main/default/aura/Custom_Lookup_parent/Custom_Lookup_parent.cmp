@@ -46,7 +46,7 @@
             <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
             <center> {!v.Message}</center>
             <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
-                <c:Reusable_Custom_lookup oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                <c:Reusable_Custom_Lookup oRecord="{!singleRec}" IconName="{!v.IconName}"/>
             </aura:iteration>
         </ul>
     </div>

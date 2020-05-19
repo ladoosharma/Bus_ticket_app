@@ -1,9 +1,23 @@
 public with sharing class Submit_Ticket_request {
+     @AuraEnabled
+    public static TripWrapper fetchSeatAndUserDetails(String tripInfo){
+        TripWrapper wrapp = new TripWrapper();
+        wrapp.userDetail.userInfo = [SELECT name from profile where id =: userInfo.getProfileId()][0].Name;
+        wrapp.userDetail.userId = userInfo.getUserId();
+        wrapp.seatsList = [SELECT Id, Occupied__c, Seat_Number__c, Ticket_Price__c from Seat__c WHERE Bus_Trip__c =: tripInfo ORDER BY Seat_Number__c ASC];
+        return wrapp;
+    }
     @AuraEnabled
     public static string pay_And_Approve_Request(List<sObject> selectedSeats, Decimal TotalPrice, String tripId){
+        List<String> seatIds = new List<String>();
+        String approvalUrls ='';
         List<Access_Token__mdt> metaRecord = [SELECT Id, Bearer_Token__c from Access_Token__mdt WHERE Date_expired__c >: DateTime.now()];
+        for(sObject seatId : selectedSeats){
+            seatIds.add(String.ValueOf(seatId.get('Id')));
+        }
         if(metaRecord.size()> 0){
             //prooced with payment request
+            approvalUrls = processTransaction(metaRecord[0].Bearer_Token__c, seatIds, TotalPrice, tripId);
         }else{
             //get bearer token
             HttpRequest req = new HttpRequest();
@@ -12,13 +26,13 @@ public with sharing class Submit_Ticket_request {
             
             // Specify the required user name and password to access the endpoint
             // As well as the header and header information
-        
+            
             String username = Label.username;
             String password = Label.password;
-        
+            
             Blob headerValue = Blob.valueOf(username + ':' + password);
             String authorizationHeader = 'Basic ' +
-            EncodingUtil.base64Encode(headerValue);
+                EncodingUtil.base64Encode(headerValue);
             req.setHeader('Authorization', authorizationHeader);
             req.setBody('grant_type=client_credentials');
             // Create a new http object to send the request object
@@ -35,18 +49,61 @@ public with sharing class Submit_Ticket_request {
                 keyValueMap.put('Date_issued__c', DateTime.now());
                 keyValueMap.put('Scope__c', body.scope);
                 Create_And_deploy_MDT.createUpdateMetadata('Access_Token__mdt.test', 'test1', keyValueMap);
+                approvalUrls = processTransaction(body.access_token, seatIds, TotalPrice, tripId);
             }
-     
+            
+        }
+        return approvalUrls;
     }
-    return null;
-}
-
-public class TokenRequestBody{
-    public String scope{set;get;}
-    public string access_token{set;get;}
-    public string token_type{set;get;}
-    public String app_id{set;get;}
-    public integer expires_in{set;get;}
-    public String nonce{set;get;}
-}
+    private static String processTransaction(String token_access, List<String> seats, Decimal price , String tripId){
+        string urlSuccess = 'salesforce1://lightning/n/Search_Trip'+'?c__seats='+String.join(seats, ';')+'&c__tId='+tripId+'&c__amount='+price+'&c__iospref=web';
+        string urlFailure = 'salesforce1://lightning/n/Search_Trip?c__failure'+'&c__iospref=web';
+        string retUrl = '';
+        Ticket_details details = new Ticket_details(price, urlSuccess, urlFailure);
+        String body = JSON.serialize(details);
+        body = body.replaceAll('currency_x', 'currency');
+        String Auth_header = 'Bearer '+ token_access;
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint('https://api.sandbox.paypal.com/v1/payments/payment ');
+        req.setMethod('POST');
+        req.setHeader('Content-Type', 'application/json');
+        req.setHeader('Authorization', Auth_header);
+        req.setBody(body);
+        system.debug(body);
+        // Create a new http object to send the request object
+        // A response object is generated as a result of the request  
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        if(res.getStatusCode() == 201){
+            //deserializing the response 
+            Payment_Callback_Class parsedObj = Payment_Callback_Class.parse(res.getBody());
+            retUrl = parsedObj.links[1].href;
+            system.debug('urls '+parsedObj.links[1]);
+           
+        }
+        return retUrl;
+    }
+    public class TokenRequestBody{
+        public String scope{set;get;}
+        public string access_token{set;get;}
+        public string token_type{set;get;}
+        public String app_id{set;get;}
+        public integer expires_in{set;get;}
+        public String nonce{set;get;}
+    }
+    public class TripWrapper{
+        @AuraEnabled
+        public User_Details userDetail{set;get;}
+        @AuraEnabled
+        public List<Seat__c> seatsList{set;get;}
+        public TripWrapper(){
+            userDetail = new User_Details();
+        }
+    }
+    public class User_Details{
+        @AuraEnabled
+        public string userInfo{set;get;}
+        @AuraEnabled
+        public string userId{set;get;}
+    }
 }

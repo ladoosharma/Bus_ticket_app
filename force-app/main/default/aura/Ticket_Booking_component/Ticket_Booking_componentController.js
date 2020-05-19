@@ -47,10 +47,21 @@
         var seatMap = component.get("v.seatMap");
         var occupiedSeatDetail=[];
 
-        if(!component.get("v.selectedSeats")){
+        if(component.get("v.selectedSeats")){
             for(var item of component.get("v.selectedSeats")){
                 occupiedSeatDetail.push(seatMap[item]);
             }
+            var action = component.get("c.pay_And_Approve_Request");
+            action.setParams({selectedSeats: occupiedSeatDetail, TotalPrice: component.get("v.totalCost"), tripId: component.get("v.tripId")});
+            action.setCallback(this, function(response){
+                if(response.getState()==="SUCCESS"){
+                    if(response.getReturnValue()){
+                        window.open(response.getReturnValue(), "_parent");
+                    }
+                    
+                }
+            });
+            $A.enqueueAction(action);
         }else{
             //thow message that please select seats
         }

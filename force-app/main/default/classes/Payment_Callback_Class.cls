@@ -1,4 +1,3 @@
-
 public class Payment_Callback_Class {
 
 	public class Payer {
@@ -7,22 +6,9 @@ public class Payment_Callback_Class {
 
 	public class Transactions {
 		public Amount amount;
-		public String description;
-		public String custom;
 		public String invoice_number;
-		public String soft_descriptor;
 		public Payment_options payment_options;
-		public Item_list item_list;
 		public List<Related_resources> related_resources;
-	}
-
-	public class Details {
-		public String subtotal;
-	}
-
-	public class Item_list {
-		public List<Items> items;
-		public Shipping_address shipping_address;
 	}
 
 	public String id;
@@ -37,7 +23,6 @@ public class Payment_Callback_Class {
 	public class Amount {
 		public String total;
 		public String currency_x;
-		public Details details;
 	}
 
 	public class Payment_options {
@@ -53,25 +38,6 @@ public class Payment_Callback_Class {
 		public String href;
 		public String rel;
 		public String method;
-	}
-
-	public class Items {
-		public String name;
-		public String description;
-		public String price;
-		public String currency_x;
-		public Integer quantity;
-	}
-
-	public class Shipping_address {
-		public String recipient_name;
-		public String line1;
-		public String line2;
-		public String city;
-		public String state;
-		public String postal_code;
-		public String country_code;
-		public String phone;
 	}
 
 	
