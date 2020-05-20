@@ -1,6 +1,6 @@
 <aura:component controller="Submit_Ticket_request"
-    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
-    access="global">
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global">
     <aura:attribute name="tripId" type="String" />
     <aura:attribute name="seatList" type="List" />
     <aura:attribute name="userType" type="Object" />
@@ -8,40 +8,38 @@
     <aura:attribute name="seatMap" type="Object"/>
     <aura:handler name="init" value="{!this}" action="{!c.fetchSeatData}" />
     <aura:attribute name="selectedSeats" type="List" />
+    <aura:handler name="ParLookupParentCommunicator" event="c:LookupParentCommunicator" action="{!c.handleLookupData}" />
     
-    <aura:if isTrue="{!v.userType != 'System Administrator'}">
-
-
-    </aura:if>
-    <div class="slds-box">
+    <div class="slds-box" style="background:white;">
+        <lightning:spinner aura:id="spinner" class="slds-show" alternativeText="Loading" size="medium" />
         <div class="slds-grid slds-grid_vertical-reverse "
-            style="height:200px; width:23rem;overflow: scroll;margin-left:-15px;">
+             style="height:200px;overflow: scroll;margin-left:-15px;">
             <aura:iteration items="{!v.seatList}" var="seats">
                 <div class="slds-col">
                     <div class="slds-grid">
                         <aura:iteration items="{!seats}" var="eachSeat">
-
+                            
                             <div class="slds-col" style="padding: 3px;">
                                 <span>
                                     <aura:if isTrue="{!eachSeat.Occupied__c}">
                                         <b>S {!eachSeat.Seat_Number__c}</b>
                                         <lightning:buttonIcon title="{!eachSeat.Seat_Number__c}"
-                                            alternativeText="{!eachSeat.Seat_Number__c}" iconName="utility:user"
-                                            disabled="true" name="{!eachSeat.Id}" onclick="{!c.selectSeats}"
-                                            class="occupied">
+                                                              alternativeText="{!'S '+eachSeat.Seat_Number__c}" iconName="utility:user"
+                                                              disabled="true" name="{!eachSeat.Id}" onclick="{!c.selectSeats}"
+                                                              class="occupied">
                                         </lightning:buttonIcon>
                                         <aura:set attribute="else">
                                             <b>S {!eachSeat.Seat_Number__c}</b>
                                             <lightning:buttonIcon title="{!eachSeat.Seat_Number__c}"
-                                                alternativeText="{!eachSeat.Seat_Number__c}" iconName="utility:user"
-                                                disabled="false" name="{!eachSeat.Id}" onclick="{!c.selectSeats}"
-                                                class="vacant">
+                                                                  alternativeText="{!'S '+eachSeat.Seat_Number__c}" iconName="utility:user"
+                                                                  disabled="false" name="{!eachSeat.Id}" onclick="{!c.selectSeats}"
+                                                                  class="vacant">
                                             </lightning:buttonIcon>
                                         </aura:set>
                                     </aura:if>
                                 </span>
                             </div>
-
+                            
                         </aura:iteration>
                     </div>
                 </div>
@@ -49,21 +47,32 @@
         </div>
     </div>
     <div class="slds-box">
-
+        
         <p>Ticket details and Cost summary</p>
+        <br></br>
+        <br></br>
         <article class="slds-card">
+            <aura:if isTrue="{!v.userType.userInfo == 'System Administrator'}">
+                <div style="width:400px;">
+                <span><b>Please select user:</b><c:Custom_Lookup_parent lookupUniqueName="USER" objectAPIName="User"
+                                                    fieldName="createddate,userName"></c:Custom_Lookup_parent></span>
+                </div>
+            </aura:if>
+            <br>
+            </br>
+            <br></br>
             <div class="slds-card__header slds-grid">
                 <header class="slds-media slds-media_center slds-has-flexi-truncate">
                     <div class="slds-media__figure">
                         <span class="slds-icon_container slds-icon-standard-account" title="account">
                             <lightning:icon iconName="utility:user" alternativeText="User"></lightning:icon>
-                            <span class="slds-assistive-text">User name</span>
+                            <span class="slds-assistive-text">{!v.userType.userName}</span>
                         </span>
                     </div>
                     <div class="slds-media__body">
                         <h2 class="slds-card__header-title">
                             <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Accounts">
-                                <span>User name</span>
+                                <span>{!v.userType.userName}</span>
                             </a>
                         </h2>
                     </div>
@@ -72,8 +81,7 @@
             </div>
             <div class="slds-card__body slds-card__body_inner">Total Cost : Rs {!v.totalCost}</div>
             <footer class="slds-card__footer">
-               //pay button will go here
-               <lightning:button label="Procced to Pay" onclick="{!c.payAmount}"></lightning:button>
+                <lightning:button label="Procced to Pay" onclick="{!c.payAmount}"></lightning:button>
             </footer>
         </article>
     </div>

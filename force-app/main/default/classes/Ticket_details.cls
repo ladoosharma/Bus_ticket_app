@@ -51,11 +51,14 @@ public with sharing class Ticket_details {
     public Ticket_details(Decimal total_cost, String successUrl, String failureUrl){
         intent = 'sale';
         payer = new Ticket_details.Payer();
+        Ticket_details.Amount amout = new Ticket_details.Amount(total_cost);
         Ticket_details.Payment_options option = new Ticket_details.Payment_options();
+        transactions = new List<Transactions>{new Ticket_details.Transactions(amout, option)};
+        successUrl = successUrl+'&c__invoice='+  transactions[0].invoice_number;
         note_to_payer = 'Contact us for any questions on your order.';
         redirect_urls = new Ticket_details.Redirect_urls(successUrl, failureUrl);
-        Ticket_details.Amount amout = new Ticket_details.Amount(total_cost);
-        transactions = new List<Transactions>{new Ticket_details.Transactions(amout, option)};
+        
+        //transactions = new List<Transactions>{new Ticket_details.Transactions(amout, option)};
     }
 	
 }

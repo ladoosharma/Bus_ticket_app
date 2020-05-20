@@ -6,12 +6,12 @@ public with sharing class Create_And_deploy_MDT implements Metadata.DeployCallba
             System.debug(' fail : '+ result);
         }
     }
-
-    public static void createUpdateMetadata(String fullName, String label, Map<String, Object> fieldWithValuesMap){
+	@future
+    public static void createUpdateMetadata(String fullName, String label, String metaMap){
         Metadata.CustomMetadata customMetadata =  new Metadata.CustomMetadata();
         customMetadata.fullName = fullName;
         customMetadata.label = label;
-        
+        Map<String, Object> fieldWithValuesMap = (Map<String, Object> )JSON.deserialize(metamap, Map<String, Object>.class);
         for(String key : fieldWithValuesMap.keySet()){
             Metadata.CustomMetadataValue customField = new Metadata.CustomMetadataValue();
             customField.field = key;

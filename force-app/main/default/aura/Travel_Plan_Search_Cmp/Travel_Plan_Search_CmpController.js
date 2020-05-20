@@ -13,6 +13,17 @@
     },
     searchHandler: function (component, event, helper) {
         var action = component.get("c.getBusTrips");
+        var spinner = component.find("spinner");
+        var from = component.get("v.FromLocation");
+        var to = component.get("v.ToLocation");
+        if(from === to && from != undefined  && to != undefined){
+            helper.showtoast("Please select different locations ", "Review error","error");
+            return;
+        }else if(from == undefined || to == undefined){
+            helper.showtoast("Please fill To and From Fields !!!!","Review error", "warning");
+            return;
+        }
+        spinner.set("v.class", "slds-show");
         action.setParams({
             fromAddr: component.get("v.FromLocation"),
             toAddr: component.get("v.ToLocation")
@@ -20,6 +31,7 @@
         action.setCallback(this, function (response) {
             var state = response.getState();
             if (state === "SUCCESS") {
+                spinner.set("v.class", "slds-hide");
                 component.set("v.ListOfBusTravel", response.getReturnValue());
             }
         });

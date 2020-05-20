@@ -1,0 +1,41 @@
+<aura:component controller="Submit_Ticket_request" implements="force:appHostable,flexipage:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    <aura:attribute name="ticket" type="Object"/>
+    <aura:attribute name="paymentStatus" type="Boolean" />
+    <!-- Add a "change" handler to handle all changes to the "v.pageReference" value -->
+    <aura:handler name="init" value="{!this}" action="{!c.onPageReferenceChange}"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.onPageReferenceChange}"/>
+    <lightning:spinner aura:id="spinner" class="slds-show" alternativeText="Loading" size="medium" />
+    <aura:if isTrue="{!v.paymentStatus}">
+        <lightning:card>
+            <aura:set attribute="title">
+                <lightning:icon iconName="action:approval" size="small"/>
+                Payment SuccessFull !!!!
+            </aura:set>
+            
+            <b>Invoice Number :</b>{!v.ticket.Invoice_Number__c}
+            <br></br>
+            <b>Total cost :</b>{!v.ticket.Ticket_cost__c}
+            <br></br>
+            <b>Status :</b>{!v.ticket.Ticket_Status__c}
+            <br></br>
+            <b>Seat Number :</b>
+            <aura:iteration items="{!v.ticket.Seats__r}" var="ticket">
+                <lightning:badge label="{!ticket.Seat_Number__c}" iconName="utility:success"/>
+            </aura:iteration>
+        </lightning:card>
+        <aura:set attribute="else">
+            <lightning:card>
+                <aura:set attribute="title">
+                    <lightning:icon iconName="action:close" size="small"/>
+                    Payment Failed !!!
+                </aura:set>
+                <b>Please Review your Payment and Try again later</b>
+            </lightning:card>
+        </aura:set>
+    </aura:if>
+    <br>
+    </br>
+    <br>
+    </br>
+    <lightning:button name="gotosearch" label="Go to Search" onclick="{!c.goToSearch}"></lightning:button>
+</aura:component>

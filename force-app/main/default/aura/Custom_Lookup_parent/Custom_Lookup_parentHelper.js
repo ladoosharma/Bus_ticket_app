@@ -6,7 +6,7 @@
         action.setParams({
             'searchKeyWord': getInputkeyWord,
             'ObjectName' : component.get("v.objectAPIName"),
-            'Fields': 'createdDate'
+            'Fields': component.get("v.fieldName")
           });
       // set a callBack    
         action.setCallback(this, function(response) {

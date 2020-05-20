@@ -1,47 +1,79 @@
 <aura:component controller="customLookUpController"
-  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
-  access="global">
-  <aura:attribute name="ListOfBusTravel" type="LIST" />
-  <aura:attribute name="ToLocation" type="String" />
-  <aura:attribute name="FromLocation" type="String" />
-  <aura:handler name="ParLookupParentCommunicator" event="c:LookupParentCommunicator" action="{!c.handleLookupData}" />
-  <div class="slds-grid slds-gutters">
-
-    <div class="slds-col">
-      <span>From :<c:Custom_Lookup_parent lookupUniqueName="FROM" objectAPIName="Location_Master__c"
-          fieldName="createdDate"></c:Custom_Lookup_parent></span>
-    </div>
-    <div class="slds-col">
-      <span>To :<c:Custom_Lookup_parent lookupUniqueName="TO" objectAPIName="Location_Master__c"
-          fieldName="createdDate"></c:Custom_Lookup_parent></span>
-    </div>
-  </div>
-
-  <lightning:button label="Search Trip" name="search" onclick="{!c.searchHandler}"></lightning:button>
-  <br></br>
-  <br></br>
-  <aura:iteration items="{!v.ListOfBusTravel}" var="eachTravel" indexVar="tripNo">
-    <div class="demo-only" style="width:30rem">
-      <article class="slds-tile">
-        <h3 class="slds-tile__title slds-truncate" title="Bus Name">
-          <a onclick="{!c.redirectToTicketBooking}" data-id="{!eachTravel.Id}">{!eachTravel.Bus__r.Name}</a>
-        </h3>
-        <div class="slds-tile__detail">
-          <dl class="slds-list_horizontal slds-wrap">
-            <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Seats Remaining">Seats Remaining:</dt>
-            <dd class="slds-item_detail slds-truncate" title="">{!eachTravel.Tickets_Remaining__c}</dd>
-            <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Ticket Price">Ticket Price:</dt>
-            <dd class="slds-item_detail slds-truncate" title="">Rs {!eachTravel.Bus__r.Ticket_price__c}</dd>
-            <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Trip Timing">Trip Timing:</dt>
-            <dd class="slds-item_detail slds-truncate" title="">
-              <lightning:formattedDateTime value="{!eachTravel.Trip_timing__c}" year="2-digit" month="short"
-                day="2-digit" hour="numeric" weekday="long" era="short" />
-            </dd>
-            <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Trip Duration">Trip Duration:</dt>
-            <dd class="slds-item_detail slds-truncate" title="">{!eachTravel.Trip_duration__c} Hr</dd>
-          </dl>
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global">
+    <aura:attribute name="ListOfBusTravel" type="LIST" />
+    <aura:attribute name="ToLocation" type="String" />
+    <aura:attribute name="FromLocation" type="String" />
+    <aura:handler name="ParLookupParentCommunicator" event="c:LookupParentCommunicator" action="{!c.handleLookupData}" />
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-task" title="search">
+                        <lightning:icon iconName="standard:search" alternativeText="search"></lightning:icon>
+                        <span class="slds-assistive-text">Search Trip</span>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Tasks">
+                            <span>Search Trip</span>
+                        </a>
+                    </h2>
+                </div>
+            </header>
         </div>
-      </article>
-    </div>
-  </aura:iteration>
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-grid slds-gutters">
+                
+                <div class="slds-col">
+                    <span>From :<c:Custom_Lookup_parent lookupUniqueName="FROM" objectAPIName="Location_Master__c"
+                                                        fieldName="createdDate"></c:Custom_Lookup_parent></span>
+                </div>
+                <div class="slds-col">
+                    <span>To :<c:Custom_Lookup_parent lookupUniqueName="TO" objectAPIName="Location_Master__c"
+                                                      fieldName="createdDate"></c:Custom_Lookup_parent></span>
+                </div>
+            </div>
+            
+            <lightning:button label="Search Trip" name="search" onclick="{!c.searchHandler}"></lightning:button>
+            <br></br>
+            <br></br>
+            <lightning:spinner aura:id="spinner" class="slds-hide" alternativeText="Loading" size="medium" />
+            <aura:if isTrue="{!v.ListOfBusTravel.length >0}">
+                <aura:iteration items="{!v.ListOfBusTravel}" var="eachTravel" indexVar="tripNo">
+                    
+                    <div class="demo-only" style="width:30rem">
+                        <article class="slds-tile">
+                            <h3 class="slds-tile__title slds-truncate" title="Bus Name">
+                                <a onclick="{!c.redirectToTicketBooking}" data-id="{!eachTravel.Id}">{!eachTravel.Bus__r.Name}</a>
+                            </h3>
+                            <div class="slds-tile__detail">
+                                <dl class="slds-list_horizontal slds-wrap">
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Seats Remaining">Seats Remaining:</dt>
+                                    <dd class="slds-item_detail slds-truncate" title="">{!eachTravel.Tickets_Remaining__c}</dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Ticket Price">Ticket Price:</dt>
+                                    <dd class="slds-item_detail slds-truncate" title="">Rs {!eachTravel.Bus__r.Ticket_price__c}</dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Trip Timing">Trip Timing:</dt>
+                                    <dd class="slds-item_detail slds-truncate" title="">
+                                        <lightning:formattedDateTime value="{!eachTravel.Trip_timing__c}" year="2-digit" month="short"
+                                                                     day="2-digit" hour="numeric" weekday="long" era="short" />
+                                    </dd>
+                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="Trip Duration">Trip Duration:</dt>
+                                    <dd class="slds-item_detail slds-truncate" title="">{!eachTravel.Trip_duration__c} Hr</dd>
+                                </dl>
+                            </div>
+                        </article>
+                    </div>
+                </aura:iteration>
+                <aura:set attribute="else">
+                    
+                    <aura:if isTrue="{!and(v.ToLocation != '', v.FromLocation !='' )}">
+                        No Trips Available between selected routes
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </div>
+    </article>
+    
 </aura:component>
