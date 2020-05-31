@@ -4,6 +4,13 @@
         <members>*</members>
         <name>AuraDefinitionBundle</name>
     </types>
-    
+    <types>
+        <members>*</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApexClass</name>
+    </types>
     <version>48.0</version>
 </Package>
