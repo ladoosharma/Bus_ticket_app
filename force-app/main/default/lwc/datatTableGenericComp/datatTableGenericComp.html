@@ -1,3 +1,11 @@
 <template>
-    
+    <template if:true={listOfData.data}>
+        
+            <lightning-datatable
+            data={dataList}
+            key-field="Id"
+            columns={columnObj}
+            ></lightning-datatable>
+        
+    </template>
 </template>
